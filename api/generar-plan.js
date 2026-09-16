@@ -5,7 +5,7 @@
 // seguridad que api/preguntar.js: la clave vive solo en GEMINI_API_KEY,
 // nunca en el navegador.
 
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-2.5-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const FUENTES_APROBADAS = [
