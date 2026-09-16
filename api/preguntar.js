@@ -67,7 +67,7 @@ Al final de tu respuesta, en una línea aparte, indica qué fuentes de la lista 
 FUENTES_USADAS: fuente 1; fuente 2`;
 }
 
-module.exports  = async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -105,4 +105,79 @@ module.exports  = async function handler(req, res) {
   const idParaLimite = usuarioId || req.headers['x-forwarded-for'] || 'anonimo';
   if (excedeLimite(idParaLimite)) {
     return res.status(429).json({
-      error: `Has hecho demasiadas preguntas en poco tiempo (límite: ${LIMITE_CONSULTAS_POR_HORA} por hora). Espera un poco antes de volver a
+      error: `Has hecho demasiadas preguntas en poco tiempo (límite: ${LIMITE_CONSULTAS_POR_HORA} por hora). Espera un poco antes de volver a preguntar.`
+    });
+  }
+
+  const contents = [];
+  if (Array.isArray(historial)) {
+    historial.slice(-10).forEach(turno => {
+      contents.push({
+        role: turno.rol === 'asistente' ? 'model' : 'user',
+        parts: [{ text: turno.texto || '' }]
+      });
+    });
+  }
+  contents.push({ role: 'user', parts: [{ text: pregunta }] });
+
+  const promptSistema = construirPromptSistema({ edad, objetivo, deporte, intensidad, fase, resultadoCuestionario });
+
+  let respuestaGemini;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
+    const r = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: promptSistema }] },
+        contents,
+        tools: [{ google_search: {} }],
+        generationConfig: {
+          temperature: 0.4,
+          maxOutputTokens: 700
+        }
+      })
+    });
+    clearTimeout(timeout);
+
+    if (!r.ok) {
+      const textoError = await r.text().catch(() => '');
+      console.error('Error de la API de Gemini:', r.status, textoError);
+      return res.status(502).json({
+        error: 'El asistente no ha podido responder ahora mismo. Prueba de nuevo en unos segundos, o usa el chat con base de conocimiento propia mientras tanto.'
+      });
+    }
+
+    const data = await r.json();
+    respuestaGemini = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || '';
+    if (!respuestaGemini) {
+      throw new Error('Respuesta vacía de Gemini');
+    }
+  } catch (err) {
+    const esTimeout = err.name === 'AbortError';
+    console.error('Fallo llamando a Gemini:', err);
+    return res.status(502).json({
+      error: esTimeout
+        ? 'El asistente ha tardado demasiado en responder. Inténtalo de nuevo.'
+        : 'El asistente no está disponible ahora mismo. Inténtalo de nuevo en un momento.'
+    });
+  }
+
+  let fuentesUsadas = [];
+  let textoFinal = respuestaGemini;
+  const matchFuentes = respuestaGemini.match(/FUENTES_USADAS:\s*(.+)$/im);
+  if (matchFuentes) {
+    fuentesUsadas = matchFuentes[1].split(';').map(f => f.trim()).filter(Boolean);
+    textoFinal = respuestaGemini.replace(/FUENTES_USADAS:.+$/im, '').trim();
+  }
+
+  return res.status(200).json({
+    respuesta: textoFinal,
+    fuentes: fuentesUsadas,
+    fechaRespuesta: new Date().toISOString(),
+    aviso: 'Esta respuesta es una orientación basada en la información disponible y no sustituye una valoración profesional.'
+  });
+};
