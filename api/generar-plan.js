@@ -168,4 +168,4 @@ module.exports = async function handler(req, res) {
     fechaGeneracion: new Date().toISOString(),
     aviso: 'Esta orientación se basa en tus respuestas y no sustituye una valoración profesional.'
   });
-}
+};
