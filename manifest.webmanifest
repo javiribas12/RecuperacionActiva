@@ -12,12 +12,12 @@
   "theme_color": "#E11F3D",
   "categories": ["health", "fitness", "medical"],
   "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Mis ejercicios", "url": "/#biblioteca", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Hablar con el chat", "url": "/#chat", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Mis ejercicios", "url": "/#biblioteca", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Hablar con el chat", "url": "/#chat", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
   ]
 }

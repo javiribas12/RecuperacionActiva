@@ -4,8 +4,8 @@
 // - NUNCA cachea /api/ (datos de usuario, pagos, chat): siempre va a la red.
 // - El detector de movimiento (MediaPipe) se guarda tras el primer uso: el corrector
 //   de cámara puede abrirse sin conexión la segunda vez.
-const VERSION = 'ra-v15';
-const PRECACHE = ['/', '/index.html', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/apple-touch-icon.png'];
+const VERSION = 'ra-v16';
+const PRECACHE = ['/', '/index.html', '/manifest.webmanifest', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];
 const CDN_MODELOS = ['cdn.jsdelivr.net', 'storage.googleapis.com'];
 
 self.addEventListener('install', e => {
