@@ -872,8 +872,7 @@ if('serviceWorker' in navigator){
   <div class="hz rv"><i class="hz-bg on" style="background-image:url('ref-17.jpg')"></i><i class="hz-bg" style="background-image:url('ref-20.jpg')"></i><i class="hz-bg" style="background-image:url('ref-35.jpg')"></i><i class="hz-bg" style="background-image:url('ref-27.jpg')"></i><i class="hz-bg" style="background-image:url('ref-25.jpg')"></i><i class="hz-bg" style="background-image:url('ref-26.jpg')"></i><b class="hz-ov"></b>
    <div class="hz-in"><div class="hz-s on"><span class="hz-eye">Fisioterapia · Readaptación · Entreno</span><h1>Vuelve a moverte <em>sin dolor</em></h1><p class="hz-sub">Un plan hecho para ti, por fases y a tu nivel.</p><a class="hz-b" onclick="pgCuestionario()">Empezar cuestionario gratis →</a></div><div class="hz-s"><span class="hz-eye">Novedades</span><h1>Eventos y <em>retos</em></h1><p class="hz-sub">Carreras, quedadas y retos para moverte acompañado.</p><a class="hz-b" onclick="pgGoKey('novedades')">Ver eventos →</a></div><div class="hz-s"><span class="hz-eye">Pregunta lo que quieras</span><h1>Activa <em>Responde</em></h1><p class="hz-sub">Tu asistente: dudas de dolor, ejercicio o recuperación.</p><a class="hz-b" onclick="irChat()">Preguntar →</a></div><div class="hz-s"><span class="hz-eye">Cómo funciona</span><h1>Cuatro pasos, <em>desde tu móvil</em></h1><p class="hz-sub">Cuéntanos, recibe tu plan, síguelo y mide tu progreso.</p><a class="hz-b" onclick="pgGoKey('pasos')">Ver cómo funciona →</a></div><div class="hz-s"><span class="hz-eye">La app</span><h1>Tu reloj y tu <em>progreso</em></h1><p class="hz-sub">Cargas, check-in diario y datos de tu reloj en un sitio.</p><a class="hz-b" onclick="irPerfil()">Ver mi progreso →</a></div><div class="hz-s"><span class="hz-eye">En Barcelona</span><h1>Reserva tu <em>cita</em></h1><p class="hz-sub">Fisioterapia 50 € · Entreno personal 45 €</p><a class="hz-b" onclick="ir('reservar')">Reservar cita →</a></div><div class="hz-dots"><button type="button" aria-label="Diapositiva 1" class="on"></button><button type="button" aria-label="Diapositiva 2"></button><button type="button" aria-label="Diapositiva 3"></button><button type="button" aria-label="Diapositiva 4"></button><button type="button" aria-label="Diapositiva 5"></button><button type="button" aria-label="Diapositiva 6"></button></div></div>
   </div>
-  <div class="lp-cq rv"><div><span class="k">NUEVO</span><h2>Chequeo corporal completo</h2><p>45 minutos revisando todo tu cuerpo, de arriba abajo, con diagnóstico orientativo.</p><div class="pp">Tu primer chequeo: 25 € <small>(−50%) · luego 50 €</small></div><a class="lp-btn" onclick="ir('chequeo')">Hacer mi chequeo →</a></div><div class="zs"><span>Cervicales</span><span>Hombros</span><span>Dorsal</span><span>Abdomen</span><span>Lumbar</span><span>Cadera</span><span>Rodillas</span><span>Tobillos</span></div></div>
- </div></section>
+   </div></section>
 
  <section class="lp-sec alt pg-screen" data-k="pasos"><div class="lp-wrap">
   <div class="lp-trust" style="margin:0 0 26px">
@@ -1124,9 +1123,28 @@ body.pg-home #nav .crear-perfil-btn{display:none}
  header .util-btn{width:40px; height:40px; flex:none; background:#f3f4f6; color:#1d1d1f;}
  header .util-btn svg{stroke:#1d1d1f;}
  #ra-top{display:none !important;}
+ body.pg-sub #ra-top{display:flex !important;top:96px;left:22px;right:auto}
+ body.pg-sub #ra-top #ra-home,body.pg-sub #ra-top #ra-perfil{display:none !important}
+ body.pg-sub #ra-top #ra-back{display:block;font-size:.95rem;padding:12px 20px}
 }
  header #btn-modo-oscuro svg{display:none;} header #btn-modo-oscuro::before{content:'🌙'; font-size:1.05rem;}
 
+
+/* ===== FONDO VIVO ===== */
+html:not([data-tema="oscuro"]) body{background-color:#fff6f2}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+ background:
+  radial-gradient(560px 460px at 8% 12%,rgba(255,122,80,.38),transparent 70%),
+  radial-gradient(620px 500px at 94% 6%,rgba(225,31,61,.26),transparent 70%),
+  radial-gradient(640px 520px at 85% 92%,rgba(124,92,255,.30),transparent 70%),
+  radial-gradient(560px 460px at 6% 88%,rgba(40,190,200,.28),transparent 70%),
+  radial-gradient(500px 420px at 50% 50%,rgba(255,214,102,.20),transparent 72%);
+ animation:raFondo 22s ease-in-out infinite alternate}
+@keyframes raFondo{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.12) translate(-14px,10px)}}
+html[data-tema="oscuro"] body::before{opacity:.35}
+@media (prefers-reduced-motion:reduce){body::before{animation:none}}
+#perfil-root .field input,#perfil-root .field select{width:100%;box-sizing:border-box}
+#perfil-root input[type=checkbox]{width:18px;height:18px;accent-color:#E11F3D;flex:none}
  /* ===== ESCRITORIO: páginas interiores a todo el ancho ===== */
 @media (min-width:1000px){
  .wrap-narrow{max-width:1120px;}
@@ -1260,7 +1278,7 @@ body.pg-home #nav .crear-perfil-btn{display:none}
  window.pgGo=go;window.pgGoKey=function(k){var i=idxKey(k);if(i>=0)go(i+1)};
  window.irPerfil=function(){try{if(typeof cuentaCreada!=='undefined'&&cuentaCreada){ir('mi-espacio');return}}catch(e){}ir('perfil')};
  function topBtn(){var w=document.getElementById('ra-top');if(!w){w=document.createElement('div');w.id='ra-top';w.innerHTML='<button type="button" id="ra-back">← Atrás</button><button type="button" id="ra-home">🏠 Inicio</button><button type="button" id="ra-perfil">👤 Crear perfil</button>';document.body.appendChild(w);
-  document.getElementById('ra-back').onclick=function(){if(history.length>1)history.back();else ir('inicio')};
+  document.getElementById('ra-back').onclick=function(){window._pgKeep=1;if(history.length>1)history.back();else{window._pgKeep=0;ir('inicio')}};
   document.getElementById('ra-home').onclick=function(){window._pgN=1;window._pgNt=Date.now();ir('inicio')};
   document.getElementById('ra-perfil').onclick=function(){irPerfil()}}
   var ok=false;try{ok=typeof cuentaCreada!=='undefined'&&cuentaCreada}catch(e){}document.getElementById('ra-perfil').textContent=ok?'👤 Mi perfil':'👤 Crear perfil'}
@@ -1277,7 +1295,7 @@ body.pg-home #nav .crear-perfil-btn{display:none}
  window.irChat=function(){if(home()&&built){var i=idxKey('chat');go(i+1)}else{window._pgTo='chat';ir('inicio')}};
  window.pgCuestionario=window.irCuestionario;window.pgGoChat=function(){var i=idxKey('chat');if(i>=0)go(i+1)};
  function applyN(){if(window._pgN){var n=window._pgN;window._pgN=0;go(n)}}
- window.addEventListener('hashchange',function(){document.body.classList.toggle('pg-home',home());document.body.classList.toggle('pg-sub',!home());if(home()&&built){if(window._pgN)applyN();else if(!window._pgTo&&Date.now()-(window._pgNt||0)>900){cur=1;show(0)}}});
+ window.addEventListener('hashchange',function(){document.body.classList.toggle('pg-home',home());document.body.classList.toggle('pg-sub',!home());if(home()&&built){if(window._pgN)applyN();else if(window._pgKeep){window._pgKeep=0;show(0)}else if(!window._pgTo&&Date.now()-(window._pgNt||0)>900){cur=1;show(0)}}});
  function setLay(n){lay=n;try{localStorage.setItem('ra_lay',n)}catch(e){};cur=1;if(typeof renderInicioSelector==='function'){renderInicioSelector();renderNoticiasInicio&&renderNoticiasInicio();renderEventosSidebar&&renderEventosSidebar();renderPreguntas&&renderPreguntas()}pgInit();var v=document.getElementById('ra-ver');if(v)[].forEach.call(v.querySelectorAll('button'),function(b){b.classList.toggle('on',+b.textContent===n)});window.scrollTo({top:0,behavior:'instant'})}
  window.setLay=setLay;
  function verBar(){if(!RA_BETA||window.parent!==window||document.getElementById('ra-ver'))return;var d=document.createElement('div');d.id='ra-ver';d.innerHTML='<span>Versión</span>'+[4,6,7,8].map(function(n){return '<button type="button" class="'+(n===lay?'on':'')+'" onclick="setLay('+n+')" title="'+LAY[n].n+'">'+n+'</button>'}).join('');document.body.appendChild(d)}
@@ -8981,11 +8999,11 @@ Un error frecuente es tratar solo el dolor local con reposo total y no abordar l
  return;
  }
  root.innerHTML = `
- <p class="badge-kicker">CREAR PERFIL</p>
- <h1>Guarda tu progreso</h1>
- <p class="lede" style="margin-top:10px;">Con una cuenta puedes guardar tus cuestionarios, tus planes de ejercicios, lo que ya has completado, y seguir tu progreso entre sesiones. Es opcional — puedes seguir usando la web sin cuenta.</p>
+ <p class="badge-kicker" style="text-align:center;">CREAR PERFIL</p>
+ <h1 style="text-align:center;">Guarda tu progreso</h1>
+ <p class="lede" style="margin:10px auto 0; max-width:680px; text-align:center;">Con una cuenta puedes guardar tus cuestionarios, tus planes de ejercicios, lo que ya has completado, y seguir tu progreso entre sesiones. Es opcional — puedes seguir usando la web sin cuenta.</p>
  ${bannerInvitacion()}
- <div class="card" style="margin-top:24px; max-width:420px;">
+ <div class="card" style="margin:24px auto 0; max-width:560px; box-shadow:0 18px 50px rgba(225,31,61,.14);">
  ${bloqueRolRegistro()}
  <div class="field" style="margin-top:10px;"><span>Nombre</span><input type="text" id="reg-inicio-nombre"></div>
  <div class="field"><span>Correo electrónico</span><input type="email" id="reg-inicio-email"></div>
