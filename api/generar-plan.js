@@ -5,7 +5,7 @@
 // seguridad que api/preguntar.js: la clave vive solo en GEMINI_API_KEY,
 // nunca en el navegador.
 
-const GEMINI_MODEL = gemini-3.5-flash-lite';
+const GEMINI_MODEL = 'gemini-3.5-flash-lite';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 const FUENTES_APROBADAS = [
@@ -99,7 +99,8 @@ Devuelve ÚNICAMENTE un JSON válido, sin texto antes ni después, con esta form
 ${esquema}`;
 }
 
-async function llamarGemini(apiKey, promptTexto) {
+// Llama a Gemini una vez. Devuelve { json } si va bien, o { error, reintentable } si falla.
+async function llamarGeminiUnaVez(apiKey, promptTexto) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 20000);
   try {
@@ -114,25 +115,30 @@ async function llamarGemini(apiKey, promptTexto) {
       })
     });
     clearTimeout(timeoutId);
-    if (!r.ok) return { error: `Gemini respondió con estado ${r.status}` };
+    if (!r.ok) {
+      // 429 (límite) y errores 5xx de Google son los únicos casos donde reintentar tiene sentido.
+      const reintentable = r.status === 429 || r.status >= 500;
+      return { error: `Gemini respondió con estado ${r.status}`, reintentable };
+    }
     const data = await r.json();
     const texto = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || '';
-    if (!texto) return { error: 'Respuesta vacía de Gemini' };
+    if (!texto) return { error: 'Respuesta vacía de Gemini', reintentable: true };
     let json;
     try { json = JSON.parse(texto); }
-    catch (e) { return { error: 'Gemini no devolvió un JSON válido' }; }
+    catch (e) { return { error: 'Gemini no devolvió un JSON válido', reintentable: true }; }
     return { json };
   } catch (err) {
     clearTimeout(timeoutId);
-    return { error: err.name === 'AbortError' ? 'Gemini tardó demasiado en responder' : 'No se pudo contactar con Gemini' };
+    return { error: err.name === 'AbortError' ? 'Gemini tardó demasiado en responder' : 'No se pudo contactar con Gemini', reintentable: true };
   }
 }
 
+const seg = require('./_seguridad');
+
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(204).end();
+  const origenOk = seg.cors(req, res, 'POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(origenOk ? 204 : 403).end();
+  if (!origenOk) return res.status(403).json({ error: 'Origen no permitido.' });
   if (req.method !== 'POST') return res.status(405).json({ error: 'Método no permitido. Usa POST.' });
 
   const apiKey = process.env.GEMINI_API_KEY;
@@ -150,20 +156,30 @@ module.exports = async function handler(req, res) {
   }
 
   const idLimite = usuarioId || req.headers['x-forwarded-for'] || 'anonimo';
-  if (excedeLimite(idLimite)) {
+  if (await seg.limitar('plan-ip:' + seg.ipDe(req), 15, 3600) || await seg.limitar('plan-dia:' + seg.ipDe(req), 60, 86400)) {
     return res.status(429).json({ error: 'Demasiadas generaciones en poco tiempo. Espera unos minutos.' });
   }
 
   const prompt = construirPrompt(tipo, respuestas);
-  const { json, error } = await llamarGemini(apiKey, prompt);
-  if (error) {
-    console.error('Error generando plan con Gemini:', tipo, error);
-    return res.status(502).json({ error });
+
+  // Primer intento
+  let resultado = await llamarGeminiUnaVez(apiKey, prompt);
+
+  // Si falló por algo pasajero (no por una mala configuración), esperamos un momento y reintentamos UNA vez más.
+  if (resultado.error && resultado.reintentable) {
+    console.log('Primer intento falló de forma reintentable, probando una segunda vez...');
+    await new Promise(resolve => setTimeout(resolve, 800));
+    resultado = await llamarGeminiUnaVez(apiKey, prompt);
+  }
+
+  if (resultado.error) {
+    console.error('Error generando plan con Gemini (tras reintentar):', tipo, resultado.error);
+    return res.status(502).json({ error: resultado.error });
   }
 
   return res.status(200).json({
     tipo,
-    resultado: json,
+    resultado: resultado.json,
     fuentes: FUENTES_APROBADAS,
     fechaGeneracion: new Date().toISOString(),
     aviso: 'Esta orientación se basa en tus respuestas y no sustituye una valoración profesional.'
