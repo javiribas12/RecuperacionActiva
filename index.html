@@ -918,7 +918,7 @@ if('serviceWorker' in navigator){
   <div class="lp-price">
    <div class="lp-pc hl rv"><img src="ref-7.jpg" alt="Dolor lumbar: una de las consultas más frecuentes" loading="lazy"><div class="b"><b>Fisioterapia</b><div class="pr">50 € <small>/ sesión</small></div><ul><li>Sesión en persona</li><li>Valoración y plan por fases</li><li>El pago se hace al confirmar la cita</li></ul><a class="lp-btn p" onclick="ir('reservar')">Reservar →</a></div></div>
    <div class="lp-pc rv" style="--d:.1s"><img src="ref-44.jpg" alt="Material para entrenar: esterillas, mancuernas y bandas" loading="lazy"><div class="b"><b>Entrenamiento personal</b><div class="pr">45 € <small>/ sesión</small></div><ul><li>Piscina, gimnasio, campo, pádel, tenis, pabellón…</li><li>Plan adaptado a tu deporte</li><li>El pago se hace al confirmar la cita</li></ul><a class="lp-btn s" onclick="ir('reservar')">Reservar →</a></div></div>
-   <div class="lp-pc rv" style="--d:.2s"><img src="ref-29.jpg" alt="Chequeo corporal completo de arriba abajo" loading="lazy"><div class="b"><b>Chequeo corporal <span style="background:#e11f3d;color:#fff;border-radius:10px;padding:2px 9px;font-size:.7rem;vertical-align:middle">NUEVO</span></b><div class="pr">50 € <small>/ 45 min</small></div><ul><li>Revisión de todo el cuerpo</li><li>Diagnóstico orientativo</li><li>Primer chequeo −50%: 25 €</li></ul><a class="lp-btn p" onclick="ir('chequeo')">Hacer mi chequeo →</a></div></div>
+   <div class="lp-pc rv" style="--d:.2s"><img src="ref-5.jpg" alt="Chequeo corporal completo de arriba abajo" loading="lazy"><div class="b"><b>Chequeo corporal <span style="background:#e11f3d;color:#fff;border-radius:10px;padding:2px 9px;font-size:.7rem;vertical-align:middle">NUEVO</span></b><div class="pr">50 € <small>/ 45 min</small></div><ul><li>Revisión de todo el cuerpo</li><li>Diagnóstico orientativo</li><li>Primer chequeo −50%: 25 €</li></ul><a class="lp-btn p" onclick="ir('chequeo')">Hacer mi chequeo →</a></div></div>
   </div>
  </div></section>
 
@@ -1137,6 +1137,13 @@ body.pg-home #nav .crear-perfil-btn{display:none}
  .foto-ref{max-width:1120px !important;}
  .foto-ref img{max-height:360px; object-fit:cover; width:100%;}
  .page > .block{padding-top:18px;}
+}
+
+@media (min-width:1000px){
+ #precios-root .grid2 > .card.chq-wide{grid-column:1/-1 !important}
+ #precios-root .chq-wide:has(img){display:grid;grid-template-columns:380px 1fr;gap:30px;align-items:center;padding:0 30px 0 0}
+ #precios-root .chq-wide img{width:100% !important;margin:0 !important;height:100% !important;min-height:260px;border-radius:0}
+ #precios-root .chq-wide .chq-txt{padding:24px 0}
 }
 @media (min-width:1000px){
  #eventos-root{max-width:1120px;}
@@ -4958,7 +4965,7 @@ document.addEventListener('touchend',function(e){if(!x0)return;var dx=e.changedT
  </ul>
  <button type="button" class="btn btn-accent" style="margin-top:16px; width:100%;" onclick="reservarTipoPreseleccionado='entreno'; ir('reservar');">Reservar entrenamiento — 45€</button>
  </div>
- <div class="card" style="grid-column:1/-1;">
+ <div class="card chq-wide" style="grid-column:1/-1;">
  <p class="badge-kicker" style="color:var(--primary);">ENTRENO + FISIO</p>
  <p style="font-size:2.2rem; font-weight:800; margin-top:8px;">85€ <span style="font-size:1rem; font-weight:400; color:var(--ink-soft);">/ sesión doble (en vez de 95€)</span></p>
  <p style="font-size:.88rem; color:var(--ink-soft); margin-top:10px;">Entrenas y, justo después, sesión de fisioterapia: ideal para descargar, tratar y salir mejor.</p>
@@ -4968,7 +4975,7 @@ document.addEventListener('touchend',function(e){if(!x0)return;var dx=e.changedT
  <h2 style="margin-top:36px;">Premium: la IA sin tantas vueltas</h2>
  <p class="lede" style="margin-top:8px;">Gratis ya puedes usar la web. Premium es para quien quiere usarla a diario, y cuesta menos que un café al mes.</p>
  <div class="grid2" style="margin-top:16px;">
- <div class="card" style="grid-column:1/-1; border:2px solid var(--primary);"><p class="badge-kicker" style="color:var(--primary);">CHEQUEO CORPORAL · NUEVO</p><p style="font-size:2rem; font-weight:800; margin-top:8px;">${CHEQUEO_PRECIO}€ <span style="font-size:1rem; font-weight:400; color:var(--ink-soft);">/ 45 min</span> <span style="font-size:.85rem; background:var(--primary); color:#fff; border-radius:12px; padding:3px 10px; margin-left:6px; vertical-align:middle;">Primer chequeo −50%: ${CHEQUEO_PROMO}€</span></p><p style="font-size:.88rem; color:var(--ink-soft); margin-top:8px;">Revisión de todo el cuerpo de arriba abajo: cervicales, hombros, dorsal, abdomen, lumbar, cadera, rodillas y tobillos. Con diagnóstico orientativo.</p><button type="button" class="btn btn-accent" style="margin-top:12px;" onclick="ir('chequeo')">Hacer mi chequeo →</button></div>
+ <div class="card chq-wide" style="grid-column:1/-1; border:2px solid var(--primary); overflow:hidden; padding-top:0;"><img src="ref-5.jpg" alt="Chequeo corporal completo: revisión de todo el cuerpo" loading="lazy" style="display:block; width:calc(100% + 40px); margin:0 -20px 16px; height:200px; object-fit:cover;"><div class="chq-txt"><p class="badge-kicker" style="color:var(--primary);">CHEQUEO CORPORAL · NUEVO</p><p style="font-size:2rem; font-weight:800; margin-top:8px;">${CHEQUEO_PRECIO}€ <span style="font-size:1rem; font-weight:400; color:var(--ink-soft);">/ 45 min</span> <span style="font-size:.85rem; background:var(--primary); color:#fff; border-radius:12px; padding:3px 10px; margin-left:6px; vertical-align:middle; white-space:nowrap; display:inline-block;">Primer chequeo −50%: ${CHEQUEO_PROMO}€</span></p><p style="font-size:.88rem; color:var(--ink-soft); margin-top:8px;">Revisión de todo el cuerpo de arriba abajo: cervicales, hombros, dorsal, abdomen, lumbar, cadera, rodillas y tobillos. Con diagnóstico orientativo.</p><button type="button" class="btn btn-accent" style="margin-top:12px;" onclick="ir('chequeo')">Hacer mi chequeo →</button></div></div>
  <div class="card"><p class="badge-kicker" style="color:var(--primary);">GRATIS</p><p style="font-size:2rem; font-weight:800; margin-top:8px;">0€</p>
  <ul class="list-check" style="grid-template-columns:1fr; margin-top:12px;"><li>5 mensajes de IA al día</li><li>Cuestionario, glosario y ejercicios básicos</li><li>Perfil y seguimiento básico</li></ul></div>
  <div class="card" style="border:2px solid var(--primary);"><p class="badge-kicker" style="color:var(--primary);">PREMIUM</p><p style="font-size:2rem; font-weight:800; margin-top:8px;">3,99€ <span style="font-size:1rem; font-weight:400; color:var(--ink-soft);">/ mes</span></p>
