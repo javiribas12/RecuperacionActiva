@@ -1130,6 +1130,32 @@ body.pg-home #nav .crear-perfil-btn{display:none}
  header #btn-modo-oscuro svg{display:none;} header #btn-modo-oscuro::before{content:'🌙'; font-size:1.05rem;}
 
 
+
+/* ===== PANEL DEL FUNDADOR ===== */
+#ra-panel-btn{position:fixed;left:14px;bottom:92px;z-index:330;display:none;border:0;border-radius:999px;padding:12px 18px;font-weight:800;font-size:.9rem;font-family:inherit;color:#fff;background:linear-gradient(120deg,#241419,#7c5cff);box-shadow:0 10px 26px rgba(36,20,25,.35);cursor:pointer}
+body.es-fundador #ra-panel-btn{display:block}
+.pn-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:18px}
+.pn-k{background:#fff;border:1px solid #f0e2e0;border-radius:18px;padding:16px 18px;box-shadow:0 8px 24px rgba(36,20,25,.06)}
+.pn-k small{display:block;font-weight:700;color:#7a6a70;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+.pn-k b{display:block;font-size:1.9rem;font-weight:900;margin-top:4px;color:#241419}
+.pn-k i{font-style:normal;font-size:.8rem;color:#7a6a70}
+.pn-k.c1{border-top:4px solid #E11F3D}.pn-k.c2{border-top:4px solid #ff7a50}.pn-k.c3{border-top:4px solid #7c5cff}.pn-k.c4{border-top:4px solid #28bec8}
+.pn-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:16px}
+.pn-c{background:#fff;border:1px solid #f0e2e0;border-radius:20px;padding:18px 20px;box-shadow:0 8px 24px rgba(36,20,25,.06)}
+.pn-c h3{margin:0 0 10px;font-size:1rem}
+.pn-bars{display:flex;align-items:flex-end;gap:3px;height:110px;margin-top:6px}
+.pn-bars span{flex:1;background:linear-gradient(180deg,#E11F3D,#ff7a50);border-radius:4px 4px 0 0;min-height:2px}
+.pn-bars.az span{background:linear-gradient(180deg,#7c5cff,#28bec8)}
+.pn-bars.vd span{background:linear-gradient(180deg,#28bec8,#5fd08a)}
+.pn-ax{display:flex;justify-content:space-between;font-size:.7rem;color:#7a6a70;margin-top:4px}
+.pn-t{width:100%;border-collapse:collapse;font-size:.86rem}
+.pn-t td,.pn-t th{padding:7px 6px;border-bottom:1px solid #f4e9e7;text-align:left;vertical-align:top}
+.pn-t th{font-size:.72rem;text-transform:uppercase;color:#7a6a70}
+.pn-aviso{background:#fff8e1;border:1px solid #f1dc9a;border-radius:14px;padding:12px 14px;font-size:.86rem;margin-top:10px}
+.pn-bar-h{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:.84rem}
+.pn-bar-h i{display:block;height:10px;border-radius:6px;background:linear-gradient(90deg,#E11F3D,#ff7a50)}
+html[data-tema="oscuro"] .pn-k,html[data-tema="oscuro"] .pn-c{background:var(--surface);border-color:var(--line)}
+html[data-tema="oscuro"] .pn-k b{color:var(--ink)}
 /* ===== FONDO VIVO ===== */
 html:not([data-tema="oscuro"]) body{background-color:#fff6f2}
 body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
@@ -1900,6 +1926,12 @@ document.addEventListener('touchend',function(e){if(!x0)return;var dx=e.changedT
 
 <!-- ============ PREGUNTA A RECUPERACIÓN ACTIVA ============ -->
 <!-- ============ PERFIL ============ -->
+<section class="page" id="page-panel">
+ <section class="block">
+ <div class="wrap" id="panel-root"></div>
+ </section>
+</section>
+
 <section class="page" id="page-perfil">
  <section class="block">
  <div class="wrap-narrow" id="perfil-root"></div>
@@ -2128,7 +2160,7 @@ document.addEventListener('touchend',function(e){if(!x0)return;var dx=e.changedT
  const WHATSAPP_NUMERO = '34673124945';
  function enlaceWhatsapp(mensaje){ return `https://wa.me/${WHATSAPP_NUMERO}${mensaje ? '?text='+encodeURIComponent(mensaje) : ''}`; }
 
- const paginasEstaticas = ['inicio','chequeo','fisioterapia','entrenamiento','readaptacion','consejos','sobre-mi','faq','recursos','cuestionario','biblioteca','contacto','perfil','eventos','deporte','mutua','wearables','legal','reservar','blog','conceptos','pilates','buscar','progresion','patologias','nutricion','bienestar','precios','ciclo','hiit','especialidades','mi-entreno','mi-espacio','servicios','calentamiento','equipos','embarazo','anatomia','glosario','herramientas','retorno','vida-diaria'];
+ const paginasEstaticas = ['inicio','panel','chequeo','fisioterapia','entrenamiento','readaptacion','consejos','sobre-mi','faq','recursos','cuestionario','biblioteca','contacto','perfil','eventos','deporte','mutua','wearables','legal','reservar','blog','conceptos','pilates','buscar','progresion','patologias','nutricion','bienestar','precios','ciclo','hiit','especialidades','mi-entreno','mi-espacio','servicios','calentamiento','equipos','embarazo','anatomia','glosario','herramientas','retorno','vida-diaria'];
 
  function ir(pagina){
  window.scrollTo({top:0,left:0,behavior:'instant'});
@@ -2148,6 +2180,75 @@ document.addEventListener('touchend',function(e){if(!x0)return;var dx=e.changedT
  }
 
  function volverAlInicio(){ ir('inicio'); }
+ // ===== Panel del fundador + medición anónima de visitas =====
+ let _fundadorTok = null, _esFundador = false;
+ function comprobarFundador(){
+ if(!sesionToken){ if(_esFundador){ _esFundador=false; document.body.classList.remove('es-fundador'); } _fundadorTok=null; return; }
+ if(_fundadorTok===sesionToken) return;
+ _fundadorTok = sesionToken;
+ fetch('/api/panel-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sesionToken,accion:'whoami'})})
+ .then(r=>r.ok?r.json():null).then(j=>{ _esFundador = !!(j&&j.admin); document.body.classList.toggle('es-fundador',_esFundador); }).catch(()=>{});
+ }
+ let _ultVisita = '';
+ function trackVisita(pag){
+ if(_esFundador || !pag) return;
+ const pagina = String(pag).toLowerCase().replace(/[^a-z0-9-]/g,'').slice(0,30) || 'inicio';
+ if(pagina==='panel' || pagina==='admin' || pagina===_ultVisita) return;
+ const primera = !_ultVisita; _ultVisita = pagina;
+ try{
+ const cuerpo = JSON.stringify({pagina, movil: window.innerWidth<1000, primera});
+ if(navigator.sendBeacon) navigator.sendBeacon('/api/visita', new Blob([cuerpo],{type:'text/plain'}));
+ else fetch('/api/visita',{method:'POST',headers:{'Content-Type':'application/json'},body:cuerpo,keepalive:true}).catch(()=>{});
+ }catch(e){}
+ }
+ function trackBusqueda(q){
+ if(_esFundador) return;
+ try{ const cuerpo=JSON.stringify({tipo:'busqueda', q:String(q||'')}); if(navigator.sendBeacon) navigator.sendBeacon('/api/visita', new Blob([cuerpo],{type:'text/plain'})); }catch(e){}
+ }
+ function _pnBarras(arr, clave, clase){
+ const max = Math.max(1, ...arr.map(x=>x[clave]||0));
+ return `<div class="pn-bars ${clase||''}">${arr.map(x=>`<span title="${escHtml(x.d)}: ${x[clave]||0}" style="height:${Math.max(2,Math.round((x[clave]||0)/max*100))}%"></span>`).join('')}</div><div class="pn-ax"><span>${escHtml(arr[0].d.slice(5))}</span><span>${escHtml(arr[arr.length-1].d.slice(5))}</span></div>`;
+ }
+ function _pnFecha(f){ try{ return new Date(f).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+ async function renderPanelFundador(){
+ const root = document.getElementById('panel-root'); if(!root) return;
+ if(!sesionToken){ root.innerHTML = `<p class="badge-kicker">PANEL DEL FUNDADOR</p><h1>Inicia sesión</h1><p class="lede">Entra con tu cuenta de fundador para ver el panel.</p><button class="btn btn-accent" onclick="ir('perfil')">Iniciar sesión</button>`; return; }
+ root.innerHTML = `<p class="badge-kicker">PANEL DEL FUNDADOR</p><h1>Cargando tus datos…</h1>`;
+ let d=null, estado=0;
+ try{ const r = await fetch('/api/panel-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:sesionToken,accion:'resumen'})}); estado=r.status; if(r.ok) d=await r.json(); }catch(e){}
+ if(!d){ root.innerHTML = `<p class="badge-kicker">PANEL DEL FUNDADOR</p><h1>${estado===403?'Solo para el fundador':'No se pudo cargar'}</h1><p class="lede">${estado===403?'Esta cuenta no tiene acceso al panel. Entra con la cuenta del fundador.':'Inténtalo de nuevo en un momento. Si sigue fallando, revisa que la base de datos (Redis) esté conectada en Vercel.'}</p><button class="btn" onclick="ir('inicio')">Volver al inicio</button>`; return; }
+ const U=d.usuarios||{}, P=d.premium||{}, V=d.visitas||{}, I=d.ia||{}, S=d.shopify||{}, B=d.busquedas||[];
+ const eur = n => (Math.round((n||0)*100)/100).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+ const k = (c,t,v,s)=>`<div class="pn-k ${c}"><small>${t}</small><b>${v}</b><i>${s||'&nbsp;'}</i></div>`;
+ const ok = o => o && !o.error;
+ let h = `<p class="badge-kicker">PANEL DEL FUNDADOR</p><h1>Cómo va Recuperación Activa</h1>
+ <p class="lede" style="margin-top:6px;">Actualizado ${escHtml(_pnFecha(d.generado))} · <a class="hero-link" onclick="renderPanelFundador()">Actualizar</a></p>
+ <div class="pn-kpis">
+ ${ok(U)?k('c1','Usuarios registrados',U.total,'+'+U.ultimos7+' en 7 días · +'+U.hoy+' hoy'):k('c1','Usuarios','—',escHtml(U.error||''))}
+ ${ok(P)?k('c3','Premium activos',P.activos,'≈ '+eur(P.mrrEstimado)+'/mes · '+P.caducanEn7Dias+' caducan en 7 días'):k('c3','Premium','—','')}
+ ${ok(V)?k('c4','Visitas hoy',V.hoy,V.unicosHoy+' visitantes únicos · '+V.total14+' en 14 días'):k('c4','Visitas','—','')}
+ ${ok(I)?k('c2','IA hoy',I.hoy,'preguntas hoy · '+I.ultimos30+' en 30 días · ≈ '+eur(I.costeEstimado30)):k('c2','IA','—','')}
+ ${S.conectado?k('c1','Ventas 30 días',eur(S.ingresos30),S.pedidos30+' pedidos'):k('c1','Ventas 30 días','—','Shopify sin conectar')}
+ ${ok(U)&&U.profesionalesPendientes?k('c2','Profesionales por verificar',U.profesionalesPendientes,'<a class="hero-link" onclick="ir(\'admin/usuarios\')">Revisar</a>'):''}
+ </div><div class="pn-g">`;
+ if(ok(V)) h += `<div class="pn-c"><h3>Visitas por día (14 días)</h3>${_pnBarras(V.serie,'visitas','')}</div>`;
+ if(ok(U)) h += `<div class="pn-c"><h3>Registros por día (30 días)</h3>${_pnBarras(U.porDia,'n','az')}<p style="font-size:.82rem;color:var(--ink-soft);margin:8px 0 0;">Pacientes ${U.roles.paciente} · Profesionales ${U.roles.profesional} · Entrenadores ${U.roles.entrenador}</p></div>`;
+ if(ok(I)) h += `<div class="pn-c"><h3>Preguntas a la IA por día (30 días)</h3>${_pnBarras(I.serie,'n','vd')}<p style="font-size:.82rem;color:var(--ink-soft);margin:8px 0 0;">Coste estimado: ${I.costeUnitarioEstimado} € por pregunta (se cambia con la variable GEMINI_COSTE_LLAMADA_EUR en Vercel). Es una estimación: el gasto real está en Google AI Studio.</p></div>`;
+ if(ok(V)){ const mx=Math.max(1,...V.topPaginas.map(x=>x.n)); h += `<div class="pn-c"><h3>Páginas más vistas (14 días)</h3>${V.topPaginas.length?V.topPaginas.map(x=>`<div class="pn-bar-h"><span style="width:110px;overflow:hidden;text-overflow:ellipsis;">${escHtml(x.pagina)}</span><i style="width:${Math.max(4,Math.round(x.n/mx*140))}px"></i><b>${x.n}</b></div>`).join(''):'<p style="color:var(--ink-soft)">Aún no hay visitas registradas. Empezarán a contarse desde ahora.</p>'}<p style="font-size:.82rem;color:var(--ink-soft);margin:8px 0 0;">Móvil ${V.dispositivos.movil} · Ordenador ${V.dispositivos.ordenador}</p></div>`; }
+ h += `<div class="pn-c"><h3>Lo que busca la gente</h3>${Array.isArray(B)&&B.length?`<table class="pn-t"><tr><th>Búsqueda</th><th>Cuándo</th></tr>${B.slice(0,12).map(x=>`<tr><td>${escHtml(x.q)}</td><td>${escHtml(_pnFecha(x.t))}</td></tr>`).join('')}</table>`:'<p style="color:var(--ink-soft)">Todavía no hay búsquedas.</p>'}</div>`;
+ if(ok(I)) h += `<div class="pn-c"><h3>Últimas preguntas al chat de IA</h3>${I.ultimasPreguntas.length?`<table class="pn-t"><tr><th>Pregunta</th><th>Cuándo</th></tr>${I.ultimasPreguntas.slice(0,12).map(x=>`<tr><td>${escHtml(x.q)}${x.p?' ⭐':''}</td><td>${escHtml(_pnFecha(x.t))}</td></tr>`).join('')}</table>`:'<p style="color:var(--ink-soft)">Todavía no hay preguntas.</p>'}</div>`;
+ if(ok(U)) h += `<div class="pn-c"><h3>Últimos registros</h3><table class="pn-t"><tr><th>Nombre</th><th>Tipo</th><th>Fecha</th></tr>${U.recientes.map(x=>`<tr><td>${escHtml(x.nombre||x.email)}<br><span style="color:var(--ink-soft);font-size:.78rem;">${escHtml(x.email)}</span></td><td>${escHtml(x.rol)}${x.estado==='pendiente'?' (por verificar)':''}</td><td>${escHtml(_pnFecha(x.fecha))}</td></tr>`).join('')}</table></div>`;
+ if(S.conectado){
+ h += `<div class="pn-c"><h3>Ventas por día (30 días)</h3>${_pnBarras(S.serie,'n','')}</div>`;
+ h += `<div class="pn-c"><h3>Lo más vendido</h3>${S.topProductos.length?`<table class="pn-t">${S.topProductos.map(x=>`<tr><td>${escHtml(x.titulo)}</td><td><b>${x.n}</b></td></tr>`).join('')}</table>`:'<p style="color:var(--ink-soft)">Aún no hay ventas.</p>'}</div>`;
+ h += `<div class="pn-c"><h3>Últimos pedidos</h3>${S.ultimos.length?`<table class="pn-t">${S.ultimos.map(x=>`<tr><td>${escHtml(x.pedido)}</td><td>${escHtml(_pnFecha(x.fecha))}</td><td>${escHtml(String(x.importe))} €</td><td>${escHtml(x.estado||'')}</td></tr>`).join('')}</table>`:'<p style="color:var(--ink-soft)">Aún no hay pedidos.</p>'}</div>`;
+ } else {
+ h += `<div class="pn-c"><h3>Ventas de Shopify</h3><div class="pn-aviso">Shopify aún no está conectado al panel${S.error?' ('+escHtml(S.error)+')':''}. Para ver las ventas aquí: en Shopify crea una app personalizada con permiso de lectura de pedidos, copia su token y guárdalo en Vercel como <b>SHOPIFY_ADMIN_TOKEN</b>. Mientras tanto, todas las ventas están en tu panel de Shopify.</div></div>`;
+ }
+ h += `</div><p style="font-size:.8rem;color:var(--ink-soft);margin-top:16px;">Las visitas y búsquedas se cuentan sin cookies y sin guardar datos personales. Tu propia navegación como fundador no se cuenta.</p>`;
+ root.innerHTML = h;
+ }
+
 
  function volverAtras(){
  let destino;
@@ -2197,6 +2298,7 @@ document.addEventListener('touchend',function(e){if(!x0)return;var dx=e.changedT
  const base = partes[0];
  const idParam = partes[1];
 
+ try{ comprobarFundador(); trackVisita(base); }catch(e){}
  let activa = base;
  if(!paginasEstaticas.includes(base) && base !== 'plan' && base !== 'admin' && base !== 'restablecer') activa = 'inicio';
 
@@ -2248,6 +2350,7 @@ document.addEventListener('touchend',function(e){if(!x0)return;var dx=e.changedT
  renderTrioRotativo(); renderEjercicioDelDia(); renderActualidad();
  if(wizardResultado && wizardResultado.respuestas) intentarMostrarBloqueIA('ia-bloque-consejos', 'consejos', wizardResultado.respuestas);
  }
+ if(activa==='panel' && typeof renderPanelFundador==='function') renderPanelFundador();
  if(activa==='cuestionario') iniciarWizard();
  if(activa==='biblioteca') renderBiblioteca();
  if(activa==='mi-entreno' && typeof renderMiEntreno==='function') renderMiEntreno();
@@ -6730,7 +6833,7 @@ Un error frecuente es tratar solo el dolor local con reposo total y no abordar l
  document.getElementById('input-buscar-global').focus();
  }
 
- function ejecutarBusquedaGlobal(termino){
+ function ejecutarBusquedaGlobal(termino){ try{ if(String(termino||'').trim().length>=2) trackBusqueda(String(termino).trim()); }catch(e){}
  const cont = document.getElementById('buscar-resultados-root');
  if(!cont) return;
  const q = normalizarTexto(termino.trim());
@@ -16754,5 +16857,6 @@ if((location.hash||'').replace('#','')==='hiit') render();
 })();
 
 </script>
+<button type="button" id="ra-panel-btn" onclick="ir('panel')">📊 Panel</button>
 </body>
 </html>
