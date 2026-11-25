@@ -71,40 +71,25 @@
     "api/generar-plan.js": {
       "maxDuration": 60
     },
-    "api/progreso.js": {
-      "maxDuration": 30
-    },
-    "api/admin-resumen.js": {
-      "maxDuration": 30
-    },
-    "api/admin-profesionales.js": {
-      "maxDuration": 30
-    },
     "api/auth.js": {
-      "maxDuration": 30
-    },
-    "api/crear-pago-sesion.js": {
-      "maxDuration": 30
-    },
-    "api/cancelar-reserva.js": {
       "maxDuration": 30
     },
     "api/stripe-webhook.js": {
       "maxDuration": 30
     },
-    "api/entrenos.js": {
-      "maxDuration": 30
-    },
-    "api/equipo.js": {
-      "maxDuration": 30
-    },
     "api/recordatorios.js": {
       "maxDuration": 60
     },
-    "api/visita.js": {
+    "api/admin.js": {
       "maxDuration": 30
     },
-    "api/panel-admin.js": {
+    "api/pagos.js": {
+      "maxDuration": 30
+    },
+    "api/datos.js": {
+      "maxDuration": 30
+    },
+    "api/social.js": {
       "maxDuration": 30
     }
   },
@@ -112,6 +97,48 @@
     {
       "path": "/api/recordatorios",
       "schedule": "0 7 * * *"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/admin-resumen",
+      "destination": "/api/admin?m=resumen"
+    },
+    {
+      "source": "/api/admin-profesionales",
+      "destination": "/api/admin?m=profesionales"
+    },
+    {
+      "source": "/api/panel-admin",
+      "destination": "/api/admin?m=panel"
+    },
+    {
+      "source": "/api/visita",
+      "destination": "/api/admin?m=visita"
+    },
+    {
+      "source": "/api/crear-pago-sesion",
+      "destination": "/api/pagos?m=crear"
+    },
+    {
+      "source": "/api/cancelar-reserva",
+      "destination": "/api/pagos?m=cancelar"
+    },
+    {
+      "source": "/api/progreso",
+      "destination": "/api/datos?m=progreso"
+    },
+    {
+      "source": "/api/entrenos",
+      "destination": "/api/datos?m=entrenos"
+    },
+    {
+      "source": "/api/equipo",
+      "destination": "/api/social?m=equipo"
+    },
+    {
+      "source": "/api/grupos",
+      "destination": "/api/social?m=grupos"
     }
   ]
 }
